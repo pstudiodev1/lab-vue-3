@@ -41,6 +41,10 @@
                   :to="{ name: 'CategoryEdit', params: { id: item.id } }"
                   >Edit</router-link
                 >
+                |
+                <a href="#" @click.prevent="deleteCategoryById(item.id)"
+                  >Delete
+                </a>
               </td>
             </tr>
           </tbody>
@@ -54,6 +58,8 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { BASE_API_URL } from "../../constants";
+// import { useRouter } from "vue-router";
+import Swal from "sweetalert2";
 
 export default {
   name: "CategoryIndex",
@@ -61,6 +67,7 @@ export default {
     const categories = ref([]);
     const errorMessage = ref("");
     const isLoading = ref(true);
+    // const router = useRouter();
 
     const getData = async () => {
       try {
@@ -77,7 +84,23 @@ export default {
       getData();
     });
 
-    return { categories, errorMessage, isLoading };
+    const deleteCategoryById = async (id) => {
+      try {
+        const response = await axios.delete(
+          `${BASE_API_URL}/api/category/${id}`
+        );
+        await Swal.fire("Good job!", response.data.message, "success");
+        // router.go("/category");
+        // router.go(0);
+        history.go(0);
+      } catch (error) {
+        errorMessage.value = "Error, please contact admin";
+      } finally {
+        isLoading.value = false;
+      }
+    };
+
+    return { categories, errorMessage, isLoading, deleteCategoryById };
   },
 };
 </script>
