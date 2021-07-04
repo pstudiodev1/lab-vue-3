@@ -49,6 +49,16 @@
             </tr>
           </tbody>
         </table>
+        <br />
+        <div v-if="categories.length">
+          <v-pagination
+            v-model="page"
+            :pages="totalPage"
+            :range-size="1"
+            active-color="#DCEDFF"
+            @update:modelValue="getData"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -60,28 +70,39 @@ import axios from "axios";
 import { BASE_API_URL } from "../../constants";
 // import { useRouter } from "vue-router";
 import Swal from "sweetalert2";
+import VPagination from "@hennge/vue3-pagination";
 
 export default {
   name: "CategoryIndex",
+  components: { VPagination },
   setup() {
     const categories = ref([]);
     const errorMessage = ref("");
     const isLoading = ref(true);
     // const router = useRouter();
+    const page = ref(1);
+    const totalPage = ref(0);
 
-    const getData = async () => {
+    const getData = async (page) => {
       try {
-        const response = await axios.get(`${BASE_API_URL}/api/category`);
-        categories.value = response.data;
+        isLoading.value = true;
+        const response = await axios.get(
+          `${BASE_API_URL}/api/category?page=${page}&page_size=10`
+        );
+        categories.value = response.data.data; // [{}]
+        totalPage.value = response.data.last_page;
+        // console.log(response.data);
       } catch (error) {
-        errorMessage.value = "Error, please contact admin";
+        //400, 500
+        console.log(error);
+        errorMessage.value = "เกิดข้อผิดพลาด กรุณาลองใหม่";
       } finally {
         isLoading.value = false;
       }
     };
 
     onMounted(() => {
-      getData();
+      getData(page.value);
     });
 
     const deleteCategoryById = async (id) => {
@@ -100,7 +121,15 @@ export default {
       }
     };
 
-    return { categories, errorMessage, isLoading, deleteCategoryById };
+    return {
+      categories,
+      errorMessage,
+      isLoading,
+      deleteCategoryById,
+      page,
+      totalPage,
+      getData,
+    };
   },
 };
 </script>
