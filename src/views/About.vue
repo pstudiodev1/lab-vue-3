@@ -30,12 +30,10 @@ export default {
 
     onMounted(() => {
       // console.log("Mounted");
-      // alert("Mounted");
     });
 
     onUnmounted(() => {
       // console.log("Un Mounted");
-      // alert("Un Mounted");
     });
 
     return { email, googleUrl, imgUrl, isShow, greet };

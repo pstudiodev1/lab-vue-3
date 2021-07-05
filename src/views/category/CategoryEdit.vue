@@ -22,47 +22,12 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
-import axios from "axios";
-import { useRouter, useRoute } from "vue-router";
-import Swal from "sweetalert2";
-import { BASE_API_URL } from "../../constants";
+import { useEdit } from "./use/crud-category.js";
 
 export default {
   name: "CategoryEdit",
   setup() {
-    const id = ref(0);
-    const name = ref("");
-    const router = useRouter();
-    const route = useRoute();
-
-    const getCategoryById = async (id) => {
-      try {
-        const response = await axios.get(`${BASE_API_URL}/api/category/${id}`);
-        name.value = response.data.name;
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    onMounted(() => {
-      id.value = route.params.id;
-      getCategoryById(id.value);
-    });
-
-    const onSubmit = async () => {
-      try {
-        const response = await axios.put(`${BASE_API_URL}/api/category`, {
-          id: id.value,
-          name: name.value,
-        });
-        await Swal.fire("Good job!", response.data.message, "success");
-        router.replace("/category");
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
+    const { name, onSubmit } = useEdit();
     return { name, onSubmit };
   },
 };

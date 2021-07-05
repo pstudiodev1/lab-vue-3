@@ -65,61 +65,22 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
-import axios from "axios";
-import { BASE_API_URL } from "../../constants";
-// import { useRouter } from "vue-router";
-import Swal from "sweetalert2";
+import { useIndex } from "./use/crud-category.js";
 import VPagination from "@hennge/vue3-pagination";
 
 export default {
   name: "CategoryIndex",
   components: { VPagination },
   setup() {
-    const categories = ref([]);
-    const errorMessage = ref("");
-    const isLoading = ref(true);
-    // const router = useRouter();
-    const page = ref(1);
-    const totalPage = ref(0);
-
-    const getData = async (page) => {
-      try {
-        isLoading.value = true;
-        const response = await axios.get(
-          `${BASE_API_URL}/api/category?page=${page}&page_size=10`
-        );
-        categories.value = response.data.data; // [{}]
-        totalPage.value = response.data.last_page;
-        // console.log(response.data);
-      } catch (error) {
-        //400, 500
-        console.log(error);
-        errorMessage.value = "เกิดข้อผิดพลาด กรุณาลองใหม่";
-      } finally {
-        isLoading.value = false;
-      }
-    };
-
-    onMounted(() => {
-      getData(page.value);
-    });
-
-    const deleteCategoryById = async (id) => {
-      try {
-        const response = await axios.delete(
-          `${BASE_API_URL}/api/category/${id}`
-        );
-        await Swal.fire("Good job!", response.data.message, "success");
-        // router.go("/category");
-        // router.go(0);
-        history.go(0);
-      } catch (error) {
-        errorMessage.value = "Error, please contact admin";
-      } finally {
-        isLoading.value = false;
-      }
-    };
+    const {
+      categories,
+      errorMessage,
+      isLoading,
+      deleteCategoryById,
+      page,
+      totalPage,
+      getData,
+    } = useIndex();
 
     return {
       categories,
