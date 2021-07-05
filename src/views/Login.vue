@@ -92,6 +92,7 @@ import { ref } from "vue";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { BASE_API_URL } from "../constants";
 
 export default {
@@ -100,6 +101,7 @@ export default {
     const email = ref("");
     const password = ref("");
     const router = useRouter();
+    const store = useStore();
 
     const onSubmit = async () => {
       try {
@@ -109,6 +111,7 @@ export default {
         });
         // console.log(response.data);
         localStorage.setItem("token", JSON.stringify(response.data));
+        store.dispatch("getProfile");
         router.push("/");
       } catch (e) {
         Swal.fire("Error!", e.response.data.message, "error");
